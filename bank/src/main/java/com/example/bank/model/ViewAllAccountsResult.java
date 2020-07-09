@@ -1,15 +1,15 @@
 package com.example.bank.model;
 
-import java.util.Collection;
+import java.util.List;
 
 public class ViewAllAccountsResult {
-    private Collection<Account> accounts;
+    private List<Account> accounts;
 
-    public Collection<Account> getAccounts() {
+    public List<Account> getAccounts() {
         return accounts;
     }
 
-    public void setAccounts(Collection<Account> accounts) {
+    public void setAccounts(List<Account> accounts) {
         this.accounts = accounts;
     }
 }

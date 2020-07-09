@@ -10,4 +10,8 @@ public class SubtractFundsResult {
     public void setResultBalance(int resultBalance) {
         this.resultBalance = resultBalance;
     }
+
+    public void setFromAccount(Account account) {
+        resultBalance = account.getAccountBalance();
+    }
 }

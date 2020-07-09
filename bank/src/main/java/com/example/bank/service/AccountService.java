@@ -4,80 +4,79 @@ import com.example.bank.exceptionhandler.AccountNotFoundException;
 import com.example.bank.exceptionhandler.DuplicateAccountException;
 import com.example.bank.exceptionhandler.ImproperBalanceException;
 import com.example.bank.model.*;
+import com.example.bank.repository.AccountRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
 
 @Service
 public class AccountService {
-    private final HashMap<String, Account> accounts = new HashMap<>();
+    @Autowired
+    private AccountRepository repository;
 
     public CreateAccountResult createAccount(CreateAccountRequest request) throws DuplicateAccountException {
-        if (accounts.containsKey(request.getUsername()))
+        if (repository.existsByUsername(request.getUsername()))
             throw new DuplicateAccountException("Account with this username already exists");
-        Account account = new Account();
-        account.setUsername(request.getUsername());
-        account.setName(request.getName());
-        account.setAccountBalance(request.getInitialAccountBalance());
+        repository.createAccount(request.getUsername(), request.getName(), request.getInitialAccountBalance());
+        Account account = repository.findById(request.getUsername()).get();
         CreateAccountResult result = new CreateAccountResult();
-        result.setUsername(account.getUsername());
-        result.setName(account.getName());
-        result.setAccountBalance(account.getAccountBalance());
-        accounts.put(account.getUsername(), account);
+        result.setFromAccount(account);
         return result;
     }
 
     public EditAccountResult editAccount(EditAccountRequest request) throws AccountNotFoundException {
-        if (!accounts.containsKey(request.getUsername()))
+        if (!repository.existsByUsername(request.getUsername()))
             throw new AccountNotFoundException("Account with this username doesn't exist");
-        accounts.get(request.getUsername()).setName(request.getEditName());
+        repository.editAccountByUsername(request.getUsername(), request.getEditName());
+        Account account = repository.findById(request.getUsername()).get();
         EditAccountResult result = new EditAccountResult();
-        result.setEditName(accounts.get(request.getUsername()).getName());
+        result.setFromAccount(account);
         return result;
     }
 
     public ViewAccountResult viewAccount(ViewAccountRequest request) throws AccountNotFoundException {
-        if (!accounts.containsKey(request.getUsername()))
+        if (!repository.existsByUsername(request.getUsername()))
             throw new AccountNotFoundException("Account with this username doesn't exist");
+        Account account = repository.findById(request.getUsername()).get();
         ViewAccountResult result = new ViewAccountResult();
-        result.setUsername(accounts.get(request.getUsername()).getUsername());
-        result.setName(accounts.get(request.getUsername()).getName());
-        result.setAccountBalance(accounts.get(request.getUsername()).getAccountBalance());
+        result.setFromAccount(account);
         return result;
     }
 
     public AddFundsResult addFunds(AddFundsRequest request) throws AccountNotFoundException {
-        if (!accounts.containsKey(request.getUsername()))
+        if (!repository.existsByUsername(request.getUsername()))
             throw new AccountNotFoundException("Account with this username doesn't exist");
-        accounts.get(request.getUsername()).setAccountBalance(accounts.get(request.getUsername()).getAccountBalance() + request.getDepositAmount());
+        repository.addFundsByUsername(request.getUsername(), request.getDepositAmount());
+        Account account = repository.findById(request.getUsername()).get();
         AddFundsResult result = new AddFundsResult();
-        result.setResultBalance(accounts.get(request.getUsername()).getAccountBalance());
+        result.setFromAccount(account);
         return result;
     }
 
     public SubtractFundsResult subtractFunds(SubtractFundsRequest request) throws AccountNotFoundException, ImproperBalanceException {
-        if (!accounts.containsKey(request.getUsername()))
+        if (!repository.existsByUsername(request.getUsername()))
             throw new AccountNotFoundException("Account with this username doesn't exist");
-        if (accounts.get(request.getUsername()).getAccountBalance() - request.getWithdrawalAmount() < 0)
-            throw new ImproperBalanceException("Withdrawal Amount exceeds current balance of " + accounts.get(request.getUsername()).getAccountBalance() + ". Please add more funds to withdraw this amount");
-        accounts.get(request.getUsername()).setAccountBalance(accounts.get(request.getUsername()).getAccountBalance() - request.getWithdrawalAmount());
+        if (repository.sufficientFundsByUsername(request.getUsername(), request.getWithdrawalAmount()))
+            throw new ImproperBalanceException("Withdrawal Amount exceeds current balance");
+        repository.subtractFundsByUsername(request.getUsername(), request.getWithdrawalAmount());
+        Account account = repository.findById(request.getUsername()).get();
         SubtractFundsResult result = new SubtractFundsResult();
-        result.setResultBalance(accounts.get(request.getUsername()).getAccountBalance());
+        result.setFromAccount(account);
         return result;
     }
 
     public ViewAllAccountsResult viewAllAccounts() {
         ViewAllAccountsResult result = new ViewAllAccountsResult();
-        result.setAccounts(accounts.values());
+        result.setAccounts(repository.findAll());
         return result;
     }
 
     public DeleteAccountResult deleteAccount(DeleteAccountRequest request) throws AccountNotFoundException {
-        if (!accounts.containsKey(request.getDeleteUsername()))
+        if (!repository.existsByUsername(request.getDeleteUsername()))
             throw new AccountNotFoundException("Account with this username doesn't exist");
+        Account account = repository.findById(request.getDeleteUsername()).get();
+        repository.deleteById(request.getDeleteUsername());
         DeleteAccountResult result = new DeleteAccountResult();
-        result.setDeletedAccountUsername(accounts.get(request.getDeleteUsername()).getUsername());
-        accounts.remove(request.getDeleteUsername());
+        result.setFromAccount(account);
         return result;
     }
 }

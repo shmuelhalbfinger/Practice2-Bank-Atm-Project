@@ -28,4 +28,10 @@ public class CreateAccountResult {
     public void setAccountBalance(int accountBalance) {
         this.accountBalance = accountBalance;
     }
+
+    public void setFromAccount(Account account) {
+        username = account.getUsername();
+        name = getName();
+        accountBalance = account.getAccountBalance();
+    }
 }

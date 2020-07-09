@@ -11,4 +11,7 @@ public class EditAccountResult {
         this.editName = editName;
     }
 
+    public void setFromAccount(Account account) {
+        editName = account.getName();
+    }
 }

@@ -1,8 +1,17 @@
 package com.example.bank.model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
 public class Account {
+    @Id
+    @Column(name = "Username")
     private String username;
+    @Column(name = "Name")
     private String name;
+    @Column(name = "AccountBalance")
     private int accountBalance;
 
     public String getUsername() {
