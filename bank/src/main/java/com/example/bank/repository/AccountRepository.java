@@ -2,24 +2,28 @@ package com.example.bank.repository;
 
 import com.example.bank.model.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
+
+@Repository
 public interface AccountRepository extends JpaRepository<Account, String> {
-    @Query("SELECT COUNT(*) > 0 FROM account WHERE Username = ?1")
-    public boolean existsByUsername(String Username);
+    @Transactional
+    @Query(value = "INSERT INTO account (username, 'name', account_balance) VALUES (:username, :name, :initialAccountBalance)", nativeQuery = true)
+    public void createAccount(@Param("username") String username, @Param("name") String name, @Param("initialAccountBalance") int initialAccountBalance);
 
-    @Query("SELECT AccountBalance-?2 > 0 FROM account WHERE username = ?1")
-    public boolean sufficientFundsByUsername(String username, int withdrawalAmount);
+    @Transactional
+    @Query(value = "UPDATE account SET name = :editName WHERE username = :username", nativeQuery = true)
+    public void editAccountByUsername(@Param("username") String username, @Param("editName") String editName);
 
-    @Query("INSERT INTO account (Username, Name, AccountBalance) VALUES (?1, ?2, ?3)")
-    public void createAccount(String username, String name, int initialAccountBalance);
+    @Transactional
+    @Query(value = "UPDATE account SET account_balance = account_balance + :depositAmount WHERE username = :username", nativeQuery = true)
+    public void addFundsByUsername(@Param("username") String username, @Param("depositAmount") int depositAmount);
 
-    @Query("UPDATE account SET Name = ?2 WHERE Username = ?1")
-    public void editAccountByUsername(String username, String name);
-
-    @Query("UPDATE account SET AccountBalance = AccountBalance + ?2 WHERE Username = ?1")
-    public void addFundsByUsername(String username, int depositAmount);
-
-    @Query("UPDATE account SET AccountBalance = AccountBalance - ?2 WHERE Username = ?1")
-    public void subtractFundsByUsername(String username, int withdrawalAmount);
+    @Transactional
+    @Query(value = "UPDATE account SET account_balance = account_balance - :withdrawalAmount WHERE username = :username", nativeQuery = true)
+    public void subtractFundsByUsername(@Param("username") String username, @Param("withdrawalAmount") int withdrawalAmount);
 }

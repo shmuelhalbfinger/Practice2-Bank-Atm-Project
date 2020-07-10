@@ -14,8 +14,6 @@ public class AccountService {
     private AccountRepository repository;
 
     public CreateAccountResult createAccount(CreateAccountRequest request) throws DuplicateAccountException {
-        if (repository.existsByUsername(request.getUsername()))
-            throw new DuplicateAccountException("Account with this username already exists");
         repository.createAccount(request.getUsername(), request.getName(), request.getInitialAccountBalance());
         Account account = repository.findById(request.getUsername()).get();
         CreateAccountResult result = new CreateAccountResult();
@@ -24,8 +22,6 @@ public class AccountService {
     }
 
     public EditAccountResult editAccount(EditAccountRequest request) throws AccountNotFoundException {
-        if (!repository.existsByUsername(request.getUsername()))
-            throw new AccountNotFoundException("Account with this username doesn't exist");
         repository.editAccountByUsername(request.getUsername(), request.getEditName());
         Account account = repository.findById(request.getUsername()).get();
         EditAccountResult result = new EditAccountResult();
@@ -34,8 +30,6 @@ public class AccountService {
     }
 
     public ViewAccountResult viewAccount(ViewAccountRequest request) throws AccountNotFoundException {
-        if (!repository.existsByUsername(request.getUsername()))
-            throw new AccountNotFoundException("Account with this username doesn't exist");
         Account account = repository.findById(request.getUsername()).get();
         ViewAccountResult result = new ViewAccountResult();
         result.setFromAccount(account);
@@ -43,8 +37,6 @@ public class AccountService {
     }
 
     public AddFundsResult addFunds(AddFundsRequest request) throws AccountNotFoundException {
-        if (!repository.existsByUsername(request.getUsername()))
-            throw new AccountNotFoundException("Account with this username doesn't exist");
         repository.addFundsByUsername(request.getUsername(), request.getDepositAmount());
         Account account = repository.findById(request.getUsername()).get();
         AddFundsResult result = new AddFundsResult();
@@ -53,10 +45,6 @@ public class AccountService {
     }
 
     public SubtractFundsResult subtractFunds(SubtractFundsRequest request) throws AccountNotFoundException, ImproperBalanceException {
-        if (!repository.existsByUsername(request.getUsername()))
-            throw new AccountNotFoundException("Account with this username doesn't exist");
-        if (repository.sufficientFundsByUsername(request.getUsername(), request.getWithdrawalAmount()))
-            throw new ImproperBalanceException("Withdrawal Amount exceeds current balance");
         repository.subtractFundsByUsername(request.getUsername(), request.getWithdrawalAmount());
         Account account = repository.findById(request.getUsername()).get();
         SubtractFundsResult result = new SubtractFundsResult();
@@ -71,8 +59,6 @@ public class AccountService {
     }
 
     public DeleteAccountResult deleteAccount(DeleteAccountRequest request) throws AccountNotFoundException {
-        if (!repository.existsByUsername(request.getDeleteUsername()))
-            throw new AccountNotFoundException("Account with this username doesn't exist");
         Account account = repository.findById(request.getDeleteUsername()).get();
         repository.deleteById(request.getDeleteUsername());
         DeleteAccountResult result = new DeleteAccountResult();

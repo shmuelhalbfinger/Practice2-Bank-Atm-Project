@@ -3,17 +3,20 @@ package com.example.bank.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "account")
 public class Account {
     @Id
-    @Column(name = "Username")
+    @Column(name = "username")
     private String username;
-    @Column(name = "Name")
+    @Column(name = "name")
     private String name;
-    @Column(name = "AccountBalance")
+    @Column(name = "account_balance")
     private int accountBalance;
 
+    @Column(name = "username")
     public String getUsername() {
         return username;
     }
@@ -22,6 +25,7 @@ public class Account {
         this.username = username;
     }
 
+    @Column(name = "name")
     public String getName() {
         return name;
     }
@@ -30,6 +34,7 @@ public class Account {
         this.name = name;
     }
 
+    @Column(name = "account_balance")
     public int getAccountBalance() {
         return accountBalance;
     }
