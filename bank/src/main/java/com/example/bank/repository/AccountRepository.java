@@ -13,7 +13,7 @@ import javax.transaction.Transactional;
 public interface AccountRepository extends JpaRepository<Account, String> {
     @Transactional
     @Modifying
-    @Query(value = "INSERT INTO account (username, 'name', account_balance) VALUES (:username, :name, :initialAccountBalance)", nativeQuery = true)
+    @Query(value = "INSERT INTO account (username, name, account_balance) VALUES (:username, :name, :initialAccountBalance)", nativeQuery = true)
     public void createAccount(@Param("username") String username, @Param("name") String name, @Param("initialAccountBalance") int initialAccountBalance);
 
     @Transactional
