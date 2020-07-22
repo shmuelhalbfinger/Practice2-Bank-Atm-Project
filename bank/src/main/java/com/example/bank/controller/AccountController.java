@@ -21,7 +21,6 @@ public class AccountController {
     private AccountMapper accountMapper;
 
 
-
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public Account createAccount(@RequestBody Account account) {
         return accountMapper.mapToAccount(accountService.createAccount(accountMapper.mapToAccountEntity(account)));
