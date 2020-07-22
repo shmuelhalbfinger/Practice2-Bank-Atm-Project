@@ -1,54 +1,57 @@
 package com.example.bank.controller;
 
-import com.example.bank.exceptionhandler.AccountNotFoundException;
-import com.example.bank.exceptionhandler.DuplicateAccountException;
-import com.example.bank.exceptionhandler.ImproperBalanceException;
-import com.example.bank.model.*;
+import com.example.bank.mapper.AccountMapper;
+import com.example.bank.model.Account;
 import com.example.bank.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class AccountController {
+
     @Autowired
-    private final AccountService service = new AccountService();
+    private AccountService accountService;
 
-    @RequestMapping(value = "/createAccount", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public CreateAccountResult createAccount(@RequestBody CreateAccountRequest request) throws DuplicateAccountException {
-        return service.createAccount(request);
+    @Autowired
+    private AccountMapper accountMapper;
+
+
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Account createAccount(@RequestBody Account account) {
+        return accountMapper.mapToAccount(accountService.createAccount(accountMapper.mapToAccountEntity(account)));
     }
 
-    @RequestMapping(value = "/editAccount", method = RequestMethod.POST)
-    public EditAccountResult editAccount(@RequestBody EditAccountRequest request) throws AccountNotFoundException {
-        return service.editAccount(request);
+    @PutMapping(value = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Account updateAccountName(@PathVariable("username") String username, @RequestBody String editName) {
+        return accountMapper.mapToAccount(accountService.updateAccountName(username, editName));
     }
 
-    @RequestMapping(value = "/viewAccount", method = RequestMethod.POST)
-    public ViewAccountResult viewAccount(@RequestBody ViewAccountRequest request) throws AccountNotFoundException {
-        return service.viewAccount(request);
+    @GetMapping(value = "/account/{username}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Account viewAccount(@PathVariable("username") String username) {
+        return accountMapper.mapToAccount(accountService.viewAccount(username));
     }
 
-    @RequestMapping(value = "/addFunds", method = RequestMethod.POST)
-    public AddFundsResult addFunds(@RequestBody AddFundsRequest request) throws AccountNotFoundException {
-        return service.addFunds(request);
+    @PutMapping(value = "/{username}/deposit", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Account deposit(@PathVariable("username") String username, @RequestParam int depositAmount) {
+        return accountMapper.mapToAccount(accountService.deposit(username, depositAmount));
     }
 
-    @RequestMapping(value = "/subtractFunds", method = RequestMethod.POST)
-    public SubtractFundsResult subtractFunds(@RequestBody SubtractFundsRequest request) throws AccountNotFoundException, ImproperBalanceException {
-        return service.subtractFunds(request);
+    @PutMapping(value = "/{username}/withdraw", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Account withdraw(@PathVariable("username") String username, @RequestParam int withdrawalAmount) {
+        return accountMapper.mapToAccount(accountService.withdraw(username, withdrawalAmount));
     }
 
-    @RequestMapping(value = "/viewAllAccounts", method = RequestMethod.POST)
-    public ViewAllAccountsResult viewAllAccounts() {
-        return service.viewAllAccounts();
+    @GetMapping(value = "/account")
+    public List<Account> viewAllAccounts() {
+        return accountService.viewAllAccounts().stream().map(accountMapper::mapToAccount).collect(Collectors.toList());
     }
 
-    @RequestMapping(value = "/deleteAccount", method = RequestMethod.POST)
-    public DeleteAccountResult deleteAccount(@RequestBody DeleteAccountRequest request) throws AccountNotFoundException {
-        return service.deleteAccount(request);
+    @DeleteMapping(value = "/account/{username}")
+    public Account deleteAccount(@PathVariable("username") String username) {
+        return accountMapper.mapToAccount(accountService.deleteAccount(username));
     }
 }
