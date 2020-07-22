@@ -2,6 +2,7 @@ package com.example.bank.controller;
 
 import com.example.bank.mapper.AccountMapper;
 import com.example.bank.model.Account;
+import com.example.bank.model.EditName;
 import com.example.bank.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -20,14 +21,15 @@ public class AccountController {
     private AccountMapper accountMapper;
 
 
+
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public Account createAccount(@RequestBody Account account) {
         return accountMapper.mapToAccount(accountService.createAccount(accountMapper.mapToAccountEntity(account)));
     }
 
     @PutMapping(value = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Account updateAccountName(@PathVariable("username") String username, @RequestBody String editName) {
-        return accountMapper.mapToAccount(accountService.updateAccountName(username, editName));
+    public Account updateAccountName(@PathVariable("username") String username, @RequestBody EditName editName) {
+        return accountMapper.mapToAccount(accountService.updateAccountName(username, editName.getName()));
     }
 
     @GetMapping(value = "/account/{username}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -45,12 +47,12 @@ public class AccountController {
         return accountMapper.mapToAccount(accountService.withdraw(username, withdrawalAmount));
     }
 
-    @GetMapping(value = "/account")
+    @GetMapping(value = "/account", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public List<Account> viewAllAccounts() {
         return accountService.viewAllAccounts().stream().map(accountMapper::mapToAccount).collect(Collectors.toList());
     }
 
-    @DeleteMapping(value = "/account/{username}")
+    @DeleteMapping(value = "/account/{username}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public Account deleteAccount(@PathVariable("username") String username) {
         return accountMapper.mapToAccount(accountService.deleteAccount(username));
     }
