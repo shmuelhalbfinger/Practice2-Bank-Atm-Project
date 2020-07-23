@@ -16,6 +16,8 @@ import javax.persistence.Table;
 @Setter
 public class AccountEntity {
     @Id
+    @Column(name = "account_id")
+    private String accountId;
     @Column(name = "username")
     private String username;
     @Column(name = "name")
