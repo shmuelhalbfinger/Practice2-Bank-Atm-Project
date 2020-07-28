@@ -66,7 +66,7 @@ public class AtmService {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");
         HttpEntity<Object> entity = new HttpEntity<>(headers);
-        String url = "http://localhost:8082/" + username + "/deposit?depositAmount=" + depositAmount;
+        String url = "https://localhost:8445/" + username + "/deposit?depositAmount=" + depositAmount;
         return restTemplate.exchange(url, HttpMethod.PUT, entity, AccountViewer.class).getBody();
 
     }
@@ -75,7 +75,7 @@ public class AtmService {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");
         HttpEntity<Object> entity = new HttpEntity<>(headers);
-        String url = "http://localhost:8082/" + username + "/withdraw?withdrawalAmount=" + withdrawalAmount;
+        String url = "https://localhost:8445/" + username + "/withdraw?withdrawalAmount=" + withdrawalAmount;
         return restTemplate.exchange(url, HttpMethod.PUT, entity, AccountViewer.class).getBody();
     }
 }
