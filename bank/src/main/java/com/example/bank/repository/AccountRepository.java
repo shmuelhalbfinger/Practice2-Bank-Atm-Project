@@ -30,5 +30,5 @@ public interface AccountRepository extends JpaRepository<AccountEntity, String>,
     @Transactional
     @Modifying
     @Query(value = "UPDATE account SET account_balance = account_balance - :withdrawalAmount WHERE username = :username", nativeQuery = true)
-    public void withdrawByUsername(@Param("username") String username, @Param("withdrawalAmount") int withdrawalAmount);
+    void withdrawByUsername(@Param("username") String username, @Param("withdrawalAmount") int withdrawalAmount);
 }
