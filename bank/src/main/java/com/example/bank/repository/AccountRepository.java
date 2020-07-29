@@ -15,17 +15,17 @@ import java.util.Optional;
 public interface AccountRepository extends JpaRepository<AccountEntity, String>, CrudRepository<AccountEntity, String> {
 
 
-    public Optional<AccountEntity> findOneByUsername(String username);
+    Optional<AccountEntity> findOneByUsername(String username);
 
     @Transactional
     @Modifying
     @Query(value = "UPDATE account SET name = :editName WHERE username = :username", nativeQuery = true)
-    public void editAccountByUsername(@Param("username") String username, @Param("editName") String editName);
+    void editAccountByUsername(@Param("username") String username, @Param("editName") String editName);
 
     @Transactional
     @Modifying
     @Query(value = "UPDATE account SET account_balance = account_balance + :depositAmount WHERE username = :username", nativeQuery = true)
-    public void depositByUsername(@Param("username") String username, @Param("depositAmount") int depositAmount);
+    void depositByUsername(@Param("username") String username, @Param("depositAmount") int depositAmount);
 
     @Transactional
     @Modifying
