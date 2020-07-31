@@ -19,21 +19,21 @@ public class AccountService {
 
     public AccountEntity updateAccountName(String username, String editName) {
         accountRepository.editAccountByUsername(username, editName);
-        return accountRepository.findOneByUsername(username).get();
+        return accountRepository.findOneByUsername(username);
     }
 
     public AccountEntity viewAccount(String username) {
-        return accountRepository.findOneByUsername(username).get();
+        return accountRepository.findOneByUsername(username);
     }
 
     public AccountEntity deposit(String username, int depositAmount) {
         accountRepository.depositByUsername(username, depositAmount);
-        return accountRepository.findOneByUsername(username).get();
+        return accountRepository.findOneByUsername(username);
     }
 
     public AccountEntity withdraw(String username, int withdrawalAmount) {
         accountRepository.withdrawByUsername(username, withdrawalAmount);
-        return accountRepository.findOneByUsername(username).get();
+        return accountRepository.findOneByUsername(username);
     }
 
     public List<AccountEntity> viewAllAccounts() {
@@ -41,8 +41,8 @@ public class AccountService {
     }
 
     public AccountEntity deleteAccount(String username) {
-        AccountEntity entity = accountRepository.findOneByUsername(username).get();
-        accountRepository.delete(accountRepository.findOneByUsername(username).get());
+        AccountEntity entity = accountRepository.findOneByUsername(username);
+        accountRepository.delete(accountRepository.findOneByUsername(username));
         return entity;
     }
 }

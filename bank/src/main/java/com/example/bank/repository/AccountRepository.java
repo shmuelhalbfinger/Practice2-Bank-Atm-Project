@@ -15,7 +15,7 @@ import java.util.Optional;
 public interface AccountRepository extends JpaRepository<AccountEntity, String>, CrudRepository<AccountEntity, String> {
 
 
-    Optional<AccountEntity> findOneByUsername(String username);
+    AccountEntity findOneByUsername(String username);
 
     @Transactional
     @Modifying
