@@ -31,7 +31,6 @@ public class AtmService {
             KeyStore keyStore = KeyStore.getInstance("PKCS12");
             keyStore.load(new FileInputStream("./practiceKey.p12"), "password".toCharArray());
             SSLContextBuilder sslContextBuilder = new SSLContextBuilder();
-            sslContextBuilder.useProtocol("TLS");
             sslContextBuilder.loadKeyMaterial(keyStore, "password".toCharArray());
             sslContextBuilder.loadTrustMaterial(new TrustSelfSignedStrategy());
             SSLConnectionSocketFactory sslConnectionSocketFactory = new SSLConnectionSocketFactory(sslContextBuilder.build());
